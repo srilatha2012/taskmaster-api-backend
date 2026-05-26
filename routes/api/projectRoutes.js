@@ -55,13 +55,13 @@ projectRoutes.put("/projects/:id", async (req, res) => {
     try {
         const projectId = req.params.id;
         const project = await Project.findById(projectId);
-        if(!project) {
-            return res.status(404).json({message: `No Project found with this project id: ${projectId}`});
+        if (!project) {
+            return res.status(404).json({ message: `No Project found with this project id: ${projectId}` });
         }
-        if(project.user.toString() !== req.user._id.toString()) {
-            return res.status(403).json({message: "User is not authorized to update this project."});
+        if (project.user.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: "User is not authorized to update this project." });
         }
-        const updatedProject = await Project.findByIdAndUpdate(projectId, req.body, {new: true,});
+        const updatedProject = await Project.findByIdAndUpdate(projectId, req.body, { new: true, });
         res.json(updatedProject);
     } catch (error) {
         res.status(500).json({ error });
@@ -69,8 +69,20 @@ projectRoutes.put("/projects/:id", async (req, res) => {
 });
 
 //delete a single project by ID ,owned by the user
-projectRoutes.delete("/projects/:id", (req, res) => {
-
+projectRoutes.delete("/projects/:id", async (req, res) => {
+    try {
+        const project = await Project.findById(req.params.id);
+        if (!project) {
+            return res.status(404).json({ message: `No project found with this project id ${req.params.id}` });
+        }
+        if(project.user.toString() !== req.user._id.toString()) {
+            return res.status(403).json({message: "User is not authorized to delete this project"});
+        }
+        await Project.findByIdAndDelete(req.params.id);
+        res.json({message: "Project deleted Successfully"});
+    } catch (error) {
+        res.status(500).json({ error });
+    }
 });
 
 module.exports = projectRoutes;
