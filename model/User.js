@@ -30,7 +30,12 @@ userSchema.pre("save", async function() {
     }
     //Done hashing continue saving
     //next();
-})
+});
+
+//custom method to compare login password with hashed password
+userSchema.methods.isCorrectPassword = async function (password) {
+    return bcrypt.compare(password, this.password);
+}
 
 //Created User model from userSchema
 const User = mongoose.model("User", userSchema);
