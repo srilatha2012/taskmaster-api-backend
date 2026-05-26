@@ -7,7 +7,8 @@ dns.setServers(["8.8.8.8", "8.8.4.4"]);
 //Import dependencies
 const express = require("express");
 const mongoDB = require("./config/connection");
-const dbConnection = require("./config/connection");
+const User = require("./model/User");
+const userRoutes = require("./routes/api/userRoutes");
 
 //Create Express application
 const app = express();
@@ -16,18 +17,22 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 //MIDDLEWARE
+app.use(express.json());
 
+app.use("/api/users", userRoutes);
 
 //ROUTES
-app.get("/test", (req,res) =>{
+app.get("/test", (req, res) => {
     res.send("testing TaskMaster API..");
 });
 
 //PORT / LISTEN
 //Connect to MongoDB and start server
-dbConnection().then(() => {
-app.listen(PORT, () =>{
-    console.log(`Server is listening on PORT ${PORT}`);
+mongoDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server is listening on PORT ${PORT}`);
+    });
 });
-});
+
+
 
