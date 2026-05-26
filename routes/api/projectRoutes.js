@@ -28,7 +28,7 @@ projectRoutes.post("/projects", async (req, res) => {
     }
 
 });
-
+// Get all projectes owned by the user which currently logged-in
 projectRoutes.get("/projects", async (req, res) => {
     try {
         console.log("get request")
@@ -39,7 +39,15 @@ projectRoutes.get("/projects", async (req, res) => {
     }
 });
 
-projectRoutes.get("/projects/:id", (req, res) => {
+//Get a single project by ID, owned by the user which currently logged-in
+projectRoutes.get("/projects/:id", async (req, res) => {
+ try {
+      const projectId = req.params.id;
+      const project = await Project.findById(projectId);
+      res.json(project);
+ } catch(error) {
+    res.status(500).json({error});
+ }
 
 });
 
