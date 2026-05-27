@@ -43,7 +43,7 @@ taskRoutes.get("/api/projects/:projectId/tasks", async (req, res) => {
 });
 
 //update task
-taskRoutes.put("/tasks/:taskId", async (req, res) => {
+taskRoutes.put("/api/tasks/:taskId", async (req, res) => {
   try {
     const { _id, project, ...updateData } = req.body;
     const task = await Task.findById(req.params.taskId);
@@ -70,5 +70,23 @@ taskRoutes.put("/tasks/:taskId", async (req, res) => {
     res.status(400).json(error);
   }
 });
+
+//Delete task
+taskRoutes.delete("/api/tasks/:taskId", async (req,res) =>{
+  const task = await Task.findById(req.params.taskId);
+    if (!task) {
+      return res.status(404).json({ message: "Task not found!" });
+    }
+    const proj = await Project.findOne({
+      _id: task.project,
+      user: req.user._id
+    });
+
+    if (!proj) {
+      return res.status(403).json({ message: "Not authorized for this project" });
+    }
+    await Task.findByIdAndDelete(req.params.taskId);
+      res.json({message: "Task deleted Successfully"});
+})
 
 module.exports = taskRoutes;
