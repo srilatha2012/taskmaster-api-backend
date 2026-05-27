@@ -10,6 +10,7 @@ const mongoDB = require("./config/connection");
 const User = require("./model/User");
 const userRoutes = require("./routes/api/userRoutes");
 const projectRoutes = require("./routes/api/projectRoutes");
+const taskRoutes = require("./routes/api/taskRoutes");
 
 //Create Express application
 const app = express();
@@ -22,6 +23,7 @@ app.use(express.json());
 
 app.use("/api/users", userRoutes);
 app.use("/api", projectRoutes);
+app.use("/", taskRoutes);
 
 //ROUTES
 app.get("/test", (req, res) => {
